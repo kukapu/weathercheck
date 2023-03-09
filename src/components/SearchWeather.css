@@ -84,9 +84,11 @@
 
 .history-container ul li {
   font-size: 18px;
+  font-weight: 800;
 }
 
 .history-container ul li button {
+  font-weight: 800;
   font-size: 15px;
   padding: 2px 5px;
   background-color: rgba(118, 165, 240, 0.838);
