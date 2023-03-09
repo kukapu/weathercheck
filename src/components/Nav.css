@@ -1,6 +1,5 @@
 .nav-container {
   display: flex;
-  /* background-image: url('../img/header.jpg'); */
   height: 80px;
   justify-content: flex-start;
   align-items: center;
@@ -8,10 +7,12 @@
 
 .nav-title {
   color: rgb(255, 255, 255);
-  font-size: 2rem;
+  font-size: 50px;
+  -webkit-text-stroke: 1px black; /* Borde negro de 2px */
   font-weight: 600;
   width: 100%;
   max-width: 1024px;
   margin: auto;
   padding: 0 1rem;
+  opacity: 0.9;
 }
