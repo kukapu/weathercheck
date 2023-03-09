@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { weatherAPI } from '../api/weatherAPI';
-import { capCity, moveToBeginning, citiesDB } from '../helpers';
+import { capCity, moveToBeginning, citiesDB, tempIcon, humidityIcon, windIcon, lensIcon } from '../helpers';
 import './SearchWeather.css'
 
 export const SearchWeather = () => {
@@ -9,6 +9,7 @@ export const SearchWeather = () => {
   const [searchHistory, setSearchHistory] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [suggestions, setSuggestions] = useState([])
+  const [searchDone, setSearchDone] = useState(false)
 
   const wrapperRef = useRef(null)
 
@@ -33,10 +34,10 @@ export const SearchWeather = () => {
     }
 
     const matchingCities = citiesDB.filter( city =>
-      city.toLowerCase().includes(cityName.toLowerCase())
+      city.toLowerCase().startsWith(event.target.value.toLowerCase())
     );
   
-    setSuggestions(matchingCities)
+    setSuggestions(matchingCities.slice(0, 10))
   };
 
   const handleSearch = async ( cityName ) => {
@@ -48,6 +49,7 @@ export const SearchWeather = () => {
       
       const response = await weatherAPI(cityName)
       if(!response.ok) {
+        setSearchDone(true)
         setIsLoading(false)
         setWeatherData({})
         return
@@ -93,36 +95,40 @@ export const SearchWeather = () => {
     handleSearch( cityName )
   };
 
-  const handleSuggestionClick = (city) => {
-    setCityName(city);
+  const handleSuggestionClick = ( cityName ) => {
+    setCityName( cityName )
+    handleSearch( cityName )
     setSuggestions([])
   };
 
   return (
     <div className='body-container'>
-      <h2>Mirar Tiempo</h2>
-      <div>
 
-        <input 
-          type="text" 
-          value={cityName} 
-          onChange={handleInputChange} 
-          onKeyPress={handleInputChange}
-          placeholder='Tiempo en...'
-        />
+
+      <div className='input-container'>
+        <div className='input-button'>
+          <input 
+            type="text" 
+            value={cityName} 
+            onChange={handleInputChange} 
+            onKeyPress={handleInputChange}
+            placeholder='Saber el tiempo en...'
+          />
+          <button onClick={() => handleHistoryClick(cityName)}>{ lensIcon }</button>
+        </div>
         <ul ref={wrapperRef} className='suggestions'>
-          {suggestions.slice(0, 10).map((city) => (
+          {suggestions.map((city) => (
             <li key={city} onClick={() => handleSuggestionClick(city)}>
               {city}
             </li>
           ))}
         </ul>
-        <button onClick={() => handleHistoryClick(cityName)}>Search</button>
       </div>
 
-      <div>
-        <h3>Úlimas Busquedas: </h3>
+
+      <div className='history-container'>
         <ul>
+          <li>Úlimas Busquedas:</li>
           {
             searchHistory.map((city) => {
               return (
@@ -136,21 +142,25 @@ export const SearchWeather = () => {
       </div>
 
 
-      {isLoading ? (
-        <div>
-          <p>Buscando...</p>
-        </div>
-      ) : Object.keys(weatherData).length > 0 ? (
-        <div>
-          <h3>{weatherData.name}</h3>
-          <p>{Math.round(weatherData.temp)}°C</p>
-          <p>{weatherData.humidity}%</p>
-          <p>{Math.round(weatherData.windSpeed)}m/s</p>
-        </div>
-      ) : (
-        <div> No se encontro la ciudad </div>
-      )}
-      
+        {isLoading ? (
+          <div className='result-container'>
+            <p>Buscando...</p>
+          </div>
+        ) : Object.keys(weatherData).length > 0 ? (
+          <div className='result-container'>
+            <h3>Tiempo en {weatherData.name}</h3>
+            <div className='result-items-container'>
+              <p className='temp'><span>{tempIcon}</span>Temperatura: {Math.round(weatherData.temp)}°C</p>
+              <p className='humi'><span>{humidityIcon}</span>Humedad: {weatherData.humidity}%</p>
+              <p className='wind'><span>{windIcon}</span>Viento: {Math.round(weatherData.windSpeed)}m/s</p>
+            </div>
+          </div>
+        ) : (
+          (searchDone) 
+            ? <div className='result-container'> No se encontró la ciudad </div>
+            : null
+        )}
+        
       
       
     </div>
