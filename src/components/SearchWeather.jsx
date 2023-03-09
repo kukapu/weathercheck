@@ -49,6 +49,7 @@ export const SearchWeather = () => {
       
       const response = await weatherAPI(cityName)
       if(!response.ok) {
+        setCityName('')
         setSearchDone(true)
         setIsLoading(false)
         setWeatherData({})
