@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { weatherAPI } from '../api/weatherAPI';
-import { capCity, moveToBeginning } from '../helpers';
+import { capCity, moveToBeginning, citiesDB } from '../helpers';
 import './SearchWeather.css'
 
 export const SearchWeather = () => {
@@ -8,6 +8,22 @@ export const SearchWeather = () => {
   const [weatherData, setWeatherData] = useState({});
   const [searchHistory, setSearchHistory] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [suggestions, setSuggestions] = useState([])
+
+  const wrapperRef = useRef(null)
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+        setSuggestions([]);
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [wrapperRef]);
 
   const handleInputChange = ( event ) => {
     setCityName( event.target.value );
@@ -15,6 +31,12 @@ export const SearchWeather = () => {
       handleSearch( cityName );
       event.preventDefault();
     }
+
+    const matchingCities = citiesDB.filter( city =>
+      city.toLowerCase().includes(cityName.toLowerCase())
+    );
+  
+    setSuggestions(matchingCities)
   };
 
   const handleSearch = async ( cityName ) => {
@@ -71,6 +93,10 @@ export const SearchWeather = () => {
     handleSearch( cityName )
   };
 
+  const handleSuggestionClick = (city) => {
+    setCityName(city);
+    setSuggestions([])
+  };
 
   return (
     <div className='body-container'>
@@ -84,6 +110,13 @@ export const SearchWeather = () => {
           onKeyPress={handleInputChange}
           placeholder='Tiempo en...'
         />
+        <ul ref={wrapperRef} className='suggestions'>
+          {suggestions.slice(0, 10).map((city) => (
+            <li key={city} onClick={() => handleSuggestionClick(city)}>
+              {city}
+            </li>
+          ))}
+        </ul>
         <button onClick={() => handleHistoryClick(cityName)}>Search</button>
       </div>
 
