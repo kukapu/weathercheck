@@ -2,8 +2,7 @@
 
 Para ejecutar el proyecto.
 
-Primero de todo tienes que tener instalado node. Lo puedes descargar desde el siguiente [link](https://nodejs.org/es/)
-
+Primero de todo tienes que tener instalado node. Lo puedes descargar desde el siguiente [link](https://nodejs.org/es/). Instalar mejor la version LTS.
 
 Descargar el repositorio y descomprimirlo.
 
