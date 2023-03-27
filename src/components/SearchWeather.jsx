@@ -44,10 +44,9 @@ export const SearchWeather = () => {
     
     if(cityName.length <= 1) return
     setIsLoading(true)
-
-    try {
       
-      const response = await weatherAPI(cityName)
+    weatherAPI(cityName).then( response => { 
+      
       if(!response.ok) {
         setCityName('')
         setSearchDone(true)
@@ -55,41 +54,44 @@ export const SearchWeather = () => {
         setWeatherData({})
         return
       }
- 
+  
       if(response.ok) {
-        const { name, main, wind } = await response.json()
-        const { temp, humidity } = main
-        setWeatherData({
-          name,
-          temp,
-          humidity,
-          windSpeed: wind.speed
-        })
-        setIsLoading(false)
-
-        if(searchHistory.includes(capCity(cityName))){
-          moveToBeginning(searchHistory, capCity(cityName))
-          setCityName('')
-          return
-        }
-        if(searchHistory.length === 5) {
-          searchHistory.pop()
-        }
+        response.json().then( data => {
           
-        setSearchHistory([
-          capCity(cityName),
-          ...searchHistory,
-        ])
-      }  
+          const { name, main, wind } = data
+          const { temp, humidity } = main
+          setWeatherData({
+            name,
+            temp,
+            humidity,
+            windSpeed: wind.speed
+          })
+          
+  
+          if(searchHistory.includes(capCity(cityName))){
+            moveToBeginning(searchHistory, capCity(cityName))
+            setCityName('')
+            return
+          }
+          if(searchHistory.length === 5) {
+            searchHistory.pop()
+          }
+            
+          setSearchHistory([
+            capCity(cityName),
+            ...searchHistory,
+          ])
+        })
+        .catch( error => {
+          console.log(error)
+          setIsLoading(false)
+        })
+        .finally(() => {
+          setIsLoading(false)
+          setCityName('')
+        })
+    }})     
 
-      setCityName('')
-
-    } catch (error) {
-      console.log(error)
-      setIsLoading(false)
-    }
-
-    
   };
 
   const handleHistoryClick = ( cityName ) => {
