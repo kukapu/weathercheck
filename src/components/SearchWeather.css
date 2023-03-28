@@ -126,6 +126,11 @@
   color: rgb(123, 167, 225);
 }
 
+.selected {
+  background-color: rgb(123, 167, 225);
+}
+
+
 
 
 @media screen and (min-width: 640px) {

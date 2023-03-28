@@ -10,6 +10,8 @@ export const SearchWeather = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [suggestions, setSuggestions] = useState([])
   const [searchDone, setSearchDone] = useState(false)
+  const [selectedIndex, setSelectedIndex] = useState(-1);
+
 
   const wrapperRef = useRef(null)
 
@@ -27,6 +29,12 @@ export const SearchWeather = () => {
     };
   }, [wrapperRef]);
 
+  // useEffect(() => {
+  //   if (selectedIndex > -1 && selectedIndex < suggestions.length) {
+  //     setCityName(suggestions[selectedIndex]);
+  //   }
+  // }, [selectedIndex, suggestions]);
+
 
   const handleInputChange = ( event ) => {
     setCityName( event.target.value );
@@ -41,6 +49,28 @@ export const SearchWeather = () => {
       handleSearch( cityName );
       setSuggestions([])
       event.preventDefault();
+    } 
+    handleKeyDown(event)
+  };
+
+  const handleKeyDown = (event) => {
+    if (event.key === 'ArrowUp') {
+      setSelectedIndex((prevIndex) => Math.max(prevIndex - 1, 0));
+      event.preventDefault();
+    } else if (event.key === 'ArrowDown') {
+      setSelectedIndex((prevIndex) => Math.min(prevIndex + 1, suggestions.length - 1));
+      event.preventDefault();
+    } else if (event.key === 'Enter') {
+      if (selectedIndex >= 0 && selectedIndex < suggestions.length) {
+        handleSearch(suggestions[selectedIndex]);
+        setCityName(suggestions[selectedIndex]);
+      } else {
+        handleSearch(cityName);
+      }
+      setSuggestions([]);
+      event.preventDefault();
+    } else {
+      setSelectedIndex(-1);
     }
   };
 
@@ -120,13 +150,18 @@ export const SearchWeather = () => {
             value={cityName} 
             onChange={handleInputChange} 
             onKeyPress={handleInputChange}
+            onKeyDown={handleKeyDown}
             placeholder='Saber el tiempo en...'
           />
           <button onClick={() => handleHistoryClick(cityName)}>{ lensIcon }</button>
         </div>
         <ul ref={wrapperRef} className='suggestions'>
-          {suggestions.map((city) => (
-            <li key={city} onClick={() => handleSuggestionClick(city)}>
+          {suggestions.map((city, index) => (
+            <li
+              key={city}
+              onClick={() => handleSuggestionClick(city)}
+              className={index === selectedIndex ? 'selected' : ''}
+            >
               {city}
             </li>
           ))}
