@@ -13,12 +13,13 @@ export const SearchWeather = () => {
 
   const wrapperRef = useRef(null)
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
-        setSuggestions([]);
-      }
+  const handleClickOutside = (event) => {
+    if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+      setSuggestions([]);
     }
+  }
+
+  useEffect(() => {
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
@@ -26,19 +27,23 @@ export const SearchWeather = () => {
     };
   }, [wrapperRef]);
 
+
   const handleInputChange = ( event ) => {
     setCityName( event.target.value );
-    if (event.key === 'Enter') {
-      handleSearch( cityName );
-      event.preventDefault();
-    }
-
+    
     const matchingCities = citiesDB.filter( city =>
       city.toLowerCase().startsWith(event.target.value.toLowerCase())
     );
-  
+      
     setSuggestions(matchingCities.slice(0, 10))
+
+    if (event.key === 'Enter') {
+      handleSearch( cityName );
+      setSuggestions([])
+      event.preventDefault();
+    }
   };
+
 
   const handleSearch = async ( cityName ) => {
     
@@ -54,43 +59,43 @@ export const SearchWeather = () => {
         setWeatherData({})
         return
       }
-  
-      if(response.ok) {
-        response.json().then( data => {
-          
-          const { name, main, wind } = data
-          const { temp, humidity } = main
-          setWeatherData({
-            name,
-            temp,
-            humidity,
-            windSpeed: wind.speed
-          })
-          
-  
-          if(searchHistory.includes(capCity(cityName))){
-            moveToBeginning(searchHistory, capCity(cityName))
-            setCityName('')
-            return
-          }
-          if(searchHistory.length === 5) {
-            searchHistory.pop()
-          }
-            
-          setSearchHistory([
-            capCity(cityName),
-            ...searchHistory,
-          ])
+
+      response.json().then( data => {
+        
+        const { name, main, wind } = data
+        const { temp, humidity } = main
+        setWeatherData({
+          name,
+          temp,
+          humidity,
+          windSpeed: wind.speed
         })
-        .catch( error => {
-          console.log(error)
-          setIsLoading(false)
-        })
-        .finally(() => {
-          setIsLoading(false)
+        
+
+        if(searchHistory.includes(capCity(cityName))){
+          moveToBeginning(searchHistory, capCity(cityName))
           setCityName('')
-        })
-    }})     
+          return
+        }
+        if(searchHistory.length === 5) {
+          searchHistory.pop()
+        }
+          
+        setSearchHistory([
+          capCity(cityName),
+          ...searchHistory,
+        ])
+
+      })
+      .catch( error => {
+        console.log(error)
+        setIsLoading(false)
+      })
+      .finally(() => {
+        setIsLoading(false)
+        setCityName('')
+      })
+    })     
 
   };
 
