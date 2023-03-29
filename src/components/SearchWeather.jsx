@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { weatherAPI } from '../api/weatherAPI';
 import { capCity, moveToBeginning, citiesDB, tempIcon, humidityIcon, windIcon, lensIcon } from '../helpers';
 import { SearchHistory } from './SearchHistory';
@@ -14,24 +14,8 @@ export const SearchWeather = () => {
   const [searchDone, setSearchDone] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
 
-  const handleInputChange = ( event ) => {
-    setCityName( event.target.value );
-    
-    const matchingCities = citiesDB.filter( city =>
-      city.toLowerCase().startsWith(event.target.value.toLowerCase())
-    );
-      
-    setSuggestions(matchingCities.slice(0, 10));
-
-    if (event.key === 'Enter') {
-      handleSearch( cityName );
-      setSuggestions([]);
-      event.preventDefault();
-    } 
-    handleKeyDown(event)
-  };
-
-  const handleKeyDown = (event) => {
+  
+  const handleKey = (event) => {
     if (event.key === 'ArrowUp') {
       setSelectedIndex((prevIndex) => Math.max(prevIndex - 1, 0));
       event.preventDefault();
@@ -52,6 +36,27 @@ export const SearchWeather = () => {
     }
   };
 
+
+  const handleInputChange = ( event ) => {
+    setCityName( event.target.value );
+    
+    const matchingCities = citiesDB.filter( city =>
+      city.toLowerCase().startsWith(event.target.value.toLowerCase())
+    );
+      
+    setSuggestions(matchingCities.slice(0, 10));
+
+    handleKey(event)
+  };
+
+  useEffect(() => {
+    if (selectedIndex > -1 && selectedIndex < suggestions.length) {
+      setCityName(suggestions[selectedIndex]);
+    }
+  }, [selectedIndex, suggestions]);
+  
+
+  
 
   const handleSearch = async ( cityName ) => {
     
@@ -117,8 +122,7 @@ export const SearchWeather = () => {
             type="text" 
             value={cityName} 
             onChange={handleInputChange} 
-            onKeyPress={handleInputChange}
-            onKeyDown={handleKeyDown}
+            onKeyDown={handleKey}
             placeholder='Saber el tiempo en...'
           />
           <button onClick={() => handleHistoryClick(cityName)}>{ lensIcon }</button>
