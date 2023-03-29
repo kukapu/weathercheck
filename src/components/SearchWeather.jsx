@@ -1,40 +1,34 @@
 import { useEffect, useRef, useState } from 'react';
 import { weatherAPI } from '../api/weatherAPI';
 import { capCity, moveToBeginning, citiesDB, tempIcon, humidityIcon, windIcon, lensIcon } from '../helpers';
-import './SearchWeather.css'
+import { SearchHistory } from './SearchHistory';
+import './SearchWeather.css';
+import { Suggestions } from './Suggestions';
 
 export const SearchWeather = () => {
   const [cityName, setCityName] = useState('');
   const [weatherData, setWeatherData] = useState({});
   const [searchHistory, setSearchHistory] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [suggestions, setSuggestions] = useState([])
-  const [searchDone, setSearchDone] = useState(false)
+  const [suggestions, setSuggestions] = useState([]);
+  const [searchDone, setSearchDone] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
 
+  // const wrapperRef = useRef(null)
 
-  const wrapperRef = useRef(null)
-
-  const handleClickOutside = (event) => {
-    if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
-      setSuggestions([]);
-    }
-  }
-
-  useEffect(() => {
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [wrapperRef]);
-
-  // useEffect(() => {
-  //   if (selectedIndex > -1 && selectedIndex < suggestions.length) {
-  //     setCityName(suggestions[selectedIndex]);
+  // const handleClickOutside = (event) => {
+  //   if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+  //     setSuggestions([]);
   //   }
-  // }, [selectedIndex, suggestions]);
+  // }
+  // useEffect(() => {
 
+  //   document.addEventListener('mousedown', handleClickOutside);
+  //   return () => {
+  //     document.removeEventListener('mousedown', handleClickOutside);
+  //   };
+
+  // }, [wrapperRef]);
 
   const handleInputChange = ( event ) => {
     setCityName( event.target.value );
@@ -43,11 +37,11 @@ export const SearchWeather = () => {
       city.toLowerCase().startsWith(event.target.value.toLowerCase())
     );
       
-    setSuggestions(matchingCities.slice(0, 10))
+    setSuggestions(matchingCities.slice(0, 10));
 
     if (event.key === 'Enter') {
       handleSearch( cityName );
-      setSuggestions([])
+      setSuggestions([]);
       event.preventDefault();
     } 
     handleKeyDown(event)
@@ -77,29 +71,29 @@ export const SearchWeather = () => {
 
   const handleSearch = async ( cityName ) => {
     
-    if(cityName.length <= 1) return
-    setIsLoading(true)
+    if(cityName.length <= 1) return;
+    setIsLoading(true);
       
     weatherAPI(cityName).then( response => { 
       
       if(!response.ok) {
-        setCityName('')
-        setSearchDone(true)
-        setIsLoading(false)
-        setWeatherData({})
-        return
+        setCityName('');
+        setSearchDone(true);
+        setIsLoading(false);
+        setWeatherData({});
+        return;
       }
 
       response.json().then( data => {
         
-        const { name, main, wind } = data
-        const { temp, humidity } = main
+        const { name, main, wind } = data;
+        const { temp, humidity } = main;
         setWeatherData({
           name,
           temp,
           humidity,
           windSpeed: wind.speed
-        })
+        });
         
 
         if(searchHistory.includes(capCity(cityName))){
@@ -129,15 +123,15 @@ export const SearchWeather = () => {
 
   };
 
-  const handleHistoryClick = ( cityName ) => {
-    handleSearch( cityName )
-  };
+  // const handleHistoryClick = ( cityName ) => {
+  //   handleSearch( cityName )
+  // };
 
-  const handleSuggestionClick = ( cityName ) => {
-    setCityName( cityName )
-    handleSearch( cityName )
-    setSuggestions([])
-  };
+  // const handleSuggestionClick = ( cityName ) => {
+  //   setCityName( cityName )
+  //   handleSearch( cityName )
+  //   setSuggestions([])
+  // };
 
   return (
     <div className='body-container'>
@@ -155,7 +149,7 @@ export const SearchWeather = () => {
           />
           <button onClick={() => handleHistoryClick(cityName)}>{ lensIcon }</button>
         </div>
-        <ul ref={wrapperRef} className='suggestions'>
+        {/* <ul ref={wrapperRef} className='suggestions'>
           {suggestions.map((city, index) => (
             <li
               key={city}
@@ -165,12 +159,19 @@ export const SearchWeather = () => {
               {city}
             </li>
           ))}
-        </ul>
+        </ul> */}
+        <Suggestions 
+          suggestions={suggestions} 
+          setSuggestions={setSuggestions} 
+          selectedIndex={selectedIndex}
+          setCityName={setCityName}
+          handleSearch={handleSearch}
+        />
       </div>
 
 
       <div className='history-container'>
-        <ul>
+        {/* <ul>
           <li>Úlimas Busquedas:</li>
           {
             searchHistory.map((city) => {
@@ -181,7 +182,8 @@ export const SearchWeather = () => {
               )
             })
           }
-        </ul>
+        </ul> */}
+        <SearchHistory searchHistory={searchHistory} handleSearch={handleSearch} />
       </div>
 
 
