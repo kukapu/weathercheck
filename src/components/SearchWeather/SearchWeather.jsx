@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import { weatherAPI } from '../../api/weatherAPI';
 import { capCity, moveToBeginning, citiesDB, tempIcon, humidityIcon, windIcon, lensIcon } from '../../helpers';
 import { SearchHistory } from '../SearchHistory/SearchHistory';
-import './SearchWeather.css';
 import { Suggestions } from '../Suggestions/Suggestions';
+import './SearchWeather.css';
 
 export const SearchWeather = () => {
   const [cityName, setCityName] = useState('');
@@ -127,7 +127,7 @@ export const SearchWeather = () => {
           />
           <button onClick={() => handleHistoryClick(cityName)}>{ lensIcon }</button>
         </div>
-        <Suggestions 
+        <Suggestions
           suggestions={suggestions} 
           setSuggestions={setSuggestions} 
           selectedIndex={selectedIndex}
