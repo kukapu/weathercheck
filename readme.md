@@ -6,7 +6,7 @@ Primero de todo tienes que tener instalado node. Lo puedes descargar desde el si
 
 Descargar el repositorio y descomprimirlo.
 
-Crea un archivo en la raiz del proyecto .env y añade la siguiente linea:
+Como se usa una variable en enterno para ejecutarlo en local tendremos que añadirla, para ello crea un archivo en la raiz del proyecto .env y añade la siguiente linea (Puedes usar tu propia apikey de OpenWeather):
 
 ~~~
 VITE_API_TOKEN = 19cb26090c02a4d348657c710f5d748e
