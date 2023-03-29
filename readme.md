@@ -6,6 +6,12 @@ Primero de todo tienes que tener instalado node. Lo puedes descargar desde el si
 
 Descargar el repositorio y descomprimirlo.
 
+Crea un archivo en la raiz del proyecto .env y añade la siguiente linea:
+
+~~~
+VITE_API_TOKEN = 19cb26090c02a4d348657c710f5d748e
+~~~
+
 Una vez tienes el proyecto descargado abres una terminal dentro del directorio y ejecutas los siguientes comandos:
 
 ~~~
