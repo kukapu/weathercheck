@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { weatherAPI } from '../api/weatherAPI';
 import { capCity, moveToBeginning, citiesDB, tempIcon, humidityIcon, windIcon, lensIcon } from '../helpers';
 import { SearchHistory } from './SearchHistory';
@@ -13,22 +13,6 @@ export const SearchWeather = () => {
   const [suggestions, setSuggestions] = useState([]);
   const [searchDone, setSearchDone] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
-
-  // const wrapperRef = useRef(null)
-
-  // const handleClickOutside = (event) => {
-  //   if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
-  //     setSuggestions([]);
-  //   }
-  // }
-  // useEffect(() => {
-
-  //   document.addEventListener('mousedown', handleClickOutside);
-  //   return () => {
-  //     document.removeEventListener('mousedown', handleClickOutside);
-  //   };
-
-  // }, [wrapperRef]);
 
   const handleInputChange = ( event ) => {
     setCityName( event.target.value );
@@ -123,16 +107,6 @@ export const SearchWeather = () => {
 
   };
 
-  // const handleHistoryClick = ( cityName ) => {
-  //   handleSearch( cityName )
-  // };
-
-  // const handleSuggestionClick = ( cityName ) => {
-  //   setCityName( cityName )
-  //   handleSearch( cityName )
-  //   setSuggestions([])
-  // };
-
   return (
     <div className='body-container'>
 
@@ -149,17 +123,6 @@ export const SearchWeather = () => {
           />
           <button onClick={() => handleHistoryClick(cityName)}>{ lensIcon }</button>
         </div>
-        {/* <ul ref={wrapperRef} className='suggestions'>
-          {suggestions.map((city, index) => (
-            <li
-              key={city}
-              onClick={() => handleSuggestionClick(city)}
-              className={index === selectedIndex ? 'selected' : ''}
-            >
-              {city}
-            </li>
-          ))}
-        </ul> */}
         <Suggestions 
           suggestions={suggestions} 
           setSuggestions={setSuggestions} 
@@ -171,18 +134,6 @@ export const SearchWeather = () => {
 
 
       <div className='history-container'>
-        {/* <ul>
-          <li>Úlimas Busquedas:</li>
-          {
-            searchHistory.map((city) => {
-              return (
-                <li key={city}>
-                  <button onClick={() => handleHistoryClick(city)}>{city}</button>
-                </li>
-              )
-            })
-          }
-        </ul> */}
         <SearchHistory searchHistory={searchHistory} handleSearch={handleSearch} />
       </div>
 
