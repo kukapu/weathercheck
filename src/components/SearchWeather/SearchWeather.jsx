@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import { weatherAPI } from '../api/weatherAPI';
-import { capCity, moveToBeginning, citiesDB, tempIcon, humidityIcon, windIcon, lensIcon } from '../helpers';
-import { SearchHistory } from './SearchHistory';
+import { weatherAPI } from '../../api/weatherAPI';
+import { capCity, moveToBeginning, citiesDB, tempIcon, humidityIcon, windIcon, lensIcon } from '../../helpers';
+import { SearchHistory } from '../SearchHistory/SearchHistory';
 import './SearchWeather.css';
-import { Suggestions } from './Suggestions';
+import { Suggestions } from '../Suggestions/Suggestions';
 
 export const SearchWeather = () => {
   const [cityName, setCityName] = useState('');
@@ -14,7 +14,7 @@ export const SearchWeather = () => {
   const [searchDone, setSearchDone] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
 
-  
+
   const handleKey = (event) => {
     if (event.key === 'ArrowUp') {
       setSelectedIndex((prevIndex) => Math.max(prevIndex - 1, 0));
@@ -142,11 +142,17 @@ export const SearchWeather = () => {
       </div>
 
 
-        {isLoading ? (
+        {
+          isLoading ? (
           <div className='result-container'>
             <p>Buscando...</p>
           </div>
-        ) : Object.keys(weatherData).length > 0 ? (
+          ) 
+          : null
+        }
+
+        {
+          Object.keys(weatherData).length > 0 ? (
           <div className='result-container'>
             <h3>Tiempo en {weatherData.name}</h3>
             <div className='result-items-container'>
